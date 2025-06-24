@@ -1,0 +1,94 @@
+﻿version: '3.9'
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  payments-posgres:
+    image: postgres:16
+    container_name: payments-posgres
+    environment:
+      POSTGRES_DB: payments_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"   # хост:контейнер → localhost:5432 → контейнер:5432
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres", "-d", "payments_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  orders-posgres:
+    image: postgres:16
+    container_name: orders-posgres
+    environment:
+      POSTGRES_DB: orders_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"   # localhost:5433 → контейнер:5432
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres", "-d", "orders_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  payments-service:
+    build:
+      context: ./PaymentsService
+      dockerfile: Dockerfile
+    container_name: payments-service
+    environment:
+      - ConnectionStrings__PaymentsDb=Host=payments-posgres;Port=5432;Database=payments_db;Username=postgres;Password=postgres
+      - RabbitMQ__Host=rabbitmq
+      - RabbitMQ__Username=guest
+      - RabbitMQ__Password=guest
+    ports:
+      - "8081:8080"
+    depends_on:
+      payments-posgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  orders-service:
+    build:
+      context: ./OrdersService
+      dockerfile: Dockerfile
+    container_name: orders-service
+    environment:
+      - ConnectionStrings__OrdersDb=Host=orders-posgres;Port=5432;Database=orders_db;Username=postgres;Password=postgres
+      - RabbitMQ__Host=rabbitmq
+      - RabbitMQ__Username=guest
+      - RabbitMQ__Password=guest
+    ports:
+      - "8082:8080"
+    depends_on:
+      orders-posgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  api-gateway:
+    build:
+      context: ./ApiGateway
+      dockerfile: Dockerfile
+    container_name: api-gateway
+    ports:
+      - "8000:8080"
+    depends_on:
+      payments-service:
+        condition: service_started
+      orders-service:
+        condition: service_started
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
