@@ -1,0 +1,13 @@
+C:\Users\kitki\source\repos\ShoppingService\Contracts\bin\Debug\net8.0\Contracts.deps.json
+C:\Users\kitki\source\repos\ShoppingService\Contracts\bin\Debug\net8.0\Contracts.dll
+C:\Users\kitki\source\repos\ShoppingService\Contracts\bin\Debug\net8.0\Contracts.pdb
+C:\Users\kitki\source\repos\ShoppingService\Contracts\obj\Debug\net8.0\Contracts.csproj.AssemblyReference.cache
+C:\Users\kitki\source\repos\ShoppingService\Contracts\obj\Debug\net8.0\Contracts.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\kitki\source\repos\ShoppingService\Contracts\obj\Debug\net8.0\Contracts.AssemblyInfoInputs.cache
+C:\Users\kitki\source\repos\ShoppingService\Contracts\obj\Debug\net8.0\Contracts.AssemblyInfo.cs
+C:\Users\kitki\source\repos\ShoppingService\Contracts\obj\Debug\net8.0\Contracts.csproj.CoreCompileInputs.cache
+C:\Users\kitki\source\repos\ShoppingService\Contracts\obj\Debug\net8.0\Contracts.sourcelink.json
+C:\Users\kitki\source\repos\ShoppingService\Contracts\obj\Debug\net8.0\Contracts.dll
+C:\Users\kitki\source\repos\ShoppingService\Contracts\obj\Debug\net8.0\refint\Contracts.dll
+C:\Users\kitki\source\repos\ShoppingService\Contracts\obj\Debug\net8.0\Contracts.pdb
+C:\Users\kitki\source\repos\ShoppingService\Contracts\obj\Debug\net8.0\ref\Contracts.dll
