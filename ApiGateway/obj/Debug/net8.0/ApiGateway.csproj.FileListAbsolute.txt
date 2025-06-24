@@ -71,4 +71,3 @@ C:\Users\kitki\source\repos\ShoppingService\ApiGateway\bin\Debug\net8.0\Polly.Ex
 C:\Users\kitki\source\repos\ShoppingService\ApiGateway\bin\Debug\net8.0\Polly.RateLimiting.dll
 C:\Users\kitki\source\repos\ShoppingService\ApiGateway\bin\Debug\net8.0\SharpYaml.dll
 C:\Users\kitki\source\repos\ShoppingService\ApiGateway\bin\Debug\net8.0\System.Diagnostics.DiagnosticSource.dll
-C:\Users\kitki\source\repos\ShoppingService\ApiGateway\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

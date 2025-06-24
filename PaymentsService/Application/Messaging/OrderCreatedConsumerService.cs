@@ -100,7 +100,8 @@ namespace PaymentsService.Application.Messaging
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "Ошибка при обработке сообщения OrderCreated");
-                    channel.BasicAck(ea.DeliveryTag, multiple: false);
+                    // Реализуем Exactly Once: если была ошибка при снятии денег, кидаем запрос снова в очередь
+                    channel.BasicNack(ea.DeliveryTag, multiple: false, requeue: true);
                 }
             };
 
