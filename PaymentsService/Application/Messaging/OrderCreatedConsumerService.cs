@@ -27,8 +27,15 @@ namespace PaymentsService.Application.Messaging
             _rmqSettings = rmqSettings;
         }
 
-        protected override Task ExecuteAsync(CancellationToken stoppingToken)
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            _logger.LogInformation("OrderCreatedConsumerService инициализация...");
+
+            // Асинхронная задержка перед стартом - 5 секунд достаточно
+            await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
+
+            _logger.LogInformation("OrderCreatedConsumerService подключение к RabbitMQ...");
+
             var factory = new ConnectionFactory
             {
                 HostName = _rmqSettings.Host,
@@ -36,7 +43,30 @@ namespace PaymentsService.Application.Messaging
                 Password = _rmqSettings.Password,
                 DispatchConsumersAsync = true
             };
-            var connection = factory.CreateConnection();
+
+            // Обработка подключения с повторными попытками
+            IConnection connection = null;
+            int retryCount = 0;
+
+            while (connection == null && !stoppingToken.IsCancellationRequested)
+            {
+                try
+                {
+                    connection = factory.CreateConnection();
+                }
+                catch (Exception ex)
+                {
+                    retryCount++;
+                    var delay = TimeSpan.FromSeconds(Math.Min(3 * retryCount, 15));
+                    _logger.LogWarning(ex, "Не удалось подключиться к RabbitMQ, повторная попытка через {delay} сек.",
+                        delay.TotalSeconds);
+                    await Task.Delay(delay, stoppingToken);
+                }
+            }
+
+            if (connection == null || stoppingToken.IsCancellationRequested)
+                return;
+
             var channel = connection.CreateModel();
 
             channel.QueueDeclare(
@@ -79,7 +109,11 @@ namespace PaymentsService.Application.Messaging
                 autoAck: false,
                 consumer: consumer);
 
-            return Task.CompletedTask;
+            _logger.LogInformation("OrderCreatedConsumerService начал прослушивание очереди {queue}",
+                _rmqSettings.OrderCreatedQueue);
+
+            // Ожидаем отмены задачи
+            await Task.Delay(Timeout.Infinite, stoppingToken);
         }
     }
 }

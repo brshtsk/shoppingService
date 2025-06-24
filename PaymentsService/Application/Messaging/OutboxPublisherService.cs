@@ -36,6 +36,10 @@ namespace PaymentsService.Application.Messaging
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            // ToDo: проверить, надо ли
+            // Задержка перед стартом
+            await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
+            
             _logger.LogInformation("OutboxPublisherService started");
             while (!stoppingToken.IsCancellationRequested)
             {
